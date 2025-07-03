@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                 // Compile to ES6
+    "module": "CommonJS",            // Support Node.js modules
+    "moduleResolution": "node",      // Support import module from node_modules
+    "esModuleInterop": true,         // Use import instead of require
+    "resolveJsonModule": true,       // Allow import file JSON
+    "strict": true                   // 
+  }
+}
