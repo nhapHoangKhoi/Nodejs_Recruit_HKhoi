@@ -6,8 +6,14 @@ const router = Router();
 
 router.post(
   '/register', 
-  companyController.registerCompany,
-  companyValidate.registerCompany
+  companyValidate.registerCompany,
+  companyController.registerCompany
+);
+
+router.post(
+  '/login', 
+  companyValidate.loginCompany,
+  companyController.loginCompany
 );
 
 export default router;
