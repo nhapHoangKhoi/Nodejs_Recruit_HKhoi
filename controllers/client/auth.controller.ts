@@ -24,7 +24,7 @@ export const verifyToken = async (req: Request, res: Response) => {
     });
 
     if(!isAccountExist) {
-      res.clearCookie("token");
+      res.clearCookie("tokenAccount");
       res.json({
         code: "error",
         message: "Invalid token!"
@@ -45,11 +45,21 @@ export const verifyToken = async (req: Request, res: Response) => {
     })
   } 
   catch (error) {
-    res.clearCookie("token");
+    res.clearCookie("tokenAccount");
+
     res.json({
       code: "error",
       message: "Invalid token!"
     })
     return;
   }
+}
+
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie("tokenAccount");
+
+  res.json({
+    code: "success",
+    message: "Logout successfully!"
+  })
 }
