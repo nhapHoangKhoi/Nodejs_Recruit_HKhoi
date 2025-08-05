@@ -3,6 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDatabase } from './config/database';
 
+// --- Cookie-parser library, BE can take request.cookies being sent from FE
+//     without this library, console.log(request.cookies) => undefined
+import cookieParser from 'cookie-parser';
+// --- End cookie-parser library
+
 import clientRoutes from "./routes/client/index.route";
 
 const app = express();
@@ -24,6 +29,13 @@ app.use(cors({
 
 // allow sending data as json
 app.use(express.json());
+
+// --- Cookie-parser library, BE can take request.cookies being sent from FE
+//     without this library, console.log(request.cookies) => undefined
+//  => Installed library above
+// app.use(cookieParser());
+app.use(cookieParser());
+// --- End cookie-parser library
 
 // --- Set up routes
 app.use("/", clientRoutes);
