@@ -89,6 +89,6 @@ export const loginAccount = async (req: Request, res: Response) => {
 
   res.json({
     code: "success",
-    message: "Đăng nhập thành công!",
+    message: "Login successfully!",
   });
 }
