@@ -16,7 +16,8 @@ connectDatabase();
 
 // CORS
 app.use(cors({
-  origin: "*", // can be a particular domain name
+  origin: "http://localhost:3000", // must be a particular domain name
+  credentials: true, // allow sending cookie
   methods: ["GET", "POST", "PATCH", "DELETE"], // allowed methods
   allowedHeaders: ["Content-Type", "Authorization"]
 }));

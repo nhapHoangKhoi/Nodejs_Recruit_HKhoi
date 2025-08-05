@@ -10,4 +10,10 @@ router.post(
   userController.registerAccount
 );
 
+router.post(
+  '/login', 
+  userValidate.loginAccount,
+  userController.loginAccount
+);
+
 export default router;
