@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import AccountCompanyModel from "../../models/account-company.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { AccountRequest } from "../../interfaces/request.interface";
 
 export const registerCompany = async (req: Request, res: Response) => {
   const { companyName, email, password } = req.body;
@@ -90,5 +91,23 @@ export const loginCompany = async (req: Request, res: Response) => {
   res.json({
     code: "success",
     message: "Login successfully!",
+  });
+}
+
+export const updateProfile = async (req: AccountRequest, res: Response) => {
+  if(req.file) {
+    req.body.logo = req.file.path;
+  } 
+  else {
+    delete req.body.logo;
+  }
+
+  await AccountCompanyModel.updateOne({
+    _id: req.account.id
+  }, req.body);
+  
+  res.json({
+    code: "success",
+    message: "Update profile successfully!"
   });
 }

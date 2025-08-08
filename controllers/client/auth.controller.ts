@@ -52,7 +52,16 @@ export const checkTokenForFE = async (req: Request, res: Response) => {
       const infoCompany = {
         id: existedAccountCompany.id,
         companyName: existedAccountCompany.companyName,
-        email: existedAccountCompany.email
+        email: existedAccountCompany.email,
+        city: existedAccountCompany.city,
+        address: existedAccountCompany.address,
+        companyModel: existedAccountCompany.companyModel,
+        companyEmployees: existedAccountCompany.companyEmployees,
+        workingTime: existedAccountCompany.workingTime,
+        workOvertime: existedAccountCompany.workOvertime,
+        phone: existedAccountCompany.phone,
+        description: existedAccountCompany.description,
+        logo: existedAccountCompany.logo
       };
 
       res.json({
