@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import AccountUserModel from "../../models/account-user.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { AccountRequest } from '../../interfaces/request.interface';
 
 export const registerAccount = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
@@ -90,5 +91,23 @@ export const loginAccount = async (req: Request, res: Response) => {
   res.json({
     code: "success",
     message: "Login successfully!",
+  });
+}
+
+export const updateProfile = async (req: AccountRequest, res: Response) => {
+  if(req.file) {
+    req.body.avatar = req.file.path;
+  } 
+  else {
+    delete req.body.avatar;
+  }
+
+  await AccountUserModel.updateOne({
+    _id: req.account.id
+  }, req.body);
+  
+  res.json({
+    code: "success",
+    message: "Update profile successfully!"
   });
 }

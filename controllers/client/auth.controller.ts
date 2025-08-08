@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import AccountUserModel from '../../models/account-user.model';
 import AccountCompanyModel from '../../models/account-company.model';
 
-export const verifyToken = async (req: Request, res: Response) => {
+export const checkTokenForFE = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.tokenAccount || req.cookies.tokenCompany;
     
@@ -29,7 +29,9 @@ export const verifyToken = async (req: Request, res: Response) => {
       const infoUser = {
         id: existedAccountUser.id,
         fullName: existedAccountUser.fullName,
-        email: existedAccountUser.email
+        email: existedAccountUser.email,
+        avatar: existedAccountUser.avatar,
+        phone: existedAccountUser.phone
       };
 
       res.json({
