@@ -6,7 +6,7 @@ const schema = new mongoose.Schema(
     title: String,
     salaryMin: Number,
     salaryMax: Number,
-    position: String,
+    level: String,
     workingForm: String,
     technologies: Array,
     description: String,

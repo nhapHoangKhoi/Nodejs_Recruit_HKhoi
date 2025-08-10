@@ -38,4 +38,10 @@ router.post(
   companyController.createJob
 );
 
+router.get(
+  '/job/list', 
+  authMiddleware.verifyTokenCompany,
+  companyController.getListJobs
+);
+
 export default router;
