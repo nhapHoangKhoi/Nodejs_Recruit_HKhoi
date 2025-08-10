@@ -263,3 +263,26 @@ export const editJob = async (req: AccountRequest, res: Response) => {
     })
   }
 }
+
+export const deleteJobPermanent = async (req: AccountRequest, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    await JobModel.deleteOne({
+      _id: id,
+      companyId: req.account.id
+    })
+
+    res.json({
+      code: "success",
+      message: "Delete job successfully!"
+    })
+  } 
+  catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "ID invalid!"
+    })
+  }
+}
