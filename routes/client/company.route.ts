@@ -63,4 +63,6 @@ router.delete(
   companyController.deleteJobPermanent
 );
 
+router.get('/list', companyController.getListCompanies);
+
 export default router;

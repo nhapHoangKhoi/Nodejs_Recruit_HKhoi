@@ -286,3 +286,45 @@ export const deleteJobPermanent = async (req: AccountRequest, res: Response) => 
     })
   }
 }
+
+export const getListCompanies = async (req: Request, res: Response) => {
+  let limitItems = 12;
+  if(req.query.limitItems) {
+    limitItems = parseInt(`${req.query.limitItems}`);
+  }
+  
+  const companyList = await AccountCompanyModel
+    .find({})
+    .limit(limitItems);
+
+  const companyListFinal = [];
+
+  for(const item of companyList) {
+    const dataItemFinal = {
+      id: item.id,
+      logo: item.logo,
+      companyName: item.companyName,
+      cityName: "",
+      totalJob: 0
+    };
+
+    const city = await CityModel.findOne({
+      _id: item.city
+    });
+    dataItemFinal.cityName = `${city?.name}`;
+
+    // total jobs
+    const totalJob = await JobModel.countDocuments({
+      companyId: item.id
+    });
+    dataItemFinal.totalJob = totalJob;
+
+    companyListFinal.push(dataItemFinal);
+  }
+
+  res.json({
+    code: "success",
+    message: "Get list companies successfully!",
+    companyList: companyListFinal
+  })
+}
