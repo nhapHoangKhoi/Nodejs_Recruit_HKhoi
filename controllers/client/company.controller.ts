@@ -139,9 +139,34 @@ export const createJob = async (req: AccountRequest, res: Response) => {
 }
 
 export const getListJobs = async (req: AccountRequest, res: Response) => {
-  const jobs = await JobModel.find({
+  const findObject = {
     companyId: req.account.id
-  })
+  };
+
+  // ----- Pagination ----- //
+  const limitItems = 2;
+  let page = 1;
+
+  if(req.query.page) {
+    const currentPage = parseInt(`${req.query.page}`);
+    if(currentPage > 0) { // prevent currentPage = -1
+      page = currentPage;
+    }
+  }
+
+  const totalRecord = await JobModel.countDocuments(findObject);
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const skip = (page - 1) * limitItems;
+  // ----- End pagination ----- //
+
+  const jobs = await JobModel
+    .find(findObject)
+    .sort({
+      createdAt: "desc"
+    })
+    .limit(limitItems)
+    .skip(skip);
+
 
   const city = await CityModel.findOne({
     _id: req.account.city
@@ -167,6 +192,7 @@ export const getListJobs = async (req: AccountRequest, res: Response) => {
   res.json({
     code: "success",
     message: "Get jobs list successfully!",
-    jobs: dataFinal
+    jobs: dataFinal,
+    totalPage: totalPage
   })
 }
