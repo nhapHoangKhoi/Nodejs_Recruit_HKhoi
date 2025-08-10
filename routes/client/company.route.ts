@@ -44,4 +44,17 @@ router.get(
   companyController.getListJobs
 );
 
+router.get(
+  '/job/edit/:id', 
+  authMiddleware.verifyTokenCompany,
+  companyController.getDetailedJob
+);
+
+router.patch(
+  '/job/edit/:id', 
+  authMiddleware.verifyTokenCompany,
+  upload.array("images", 8),
+  companyController.editJob
+);
+
 export default router;

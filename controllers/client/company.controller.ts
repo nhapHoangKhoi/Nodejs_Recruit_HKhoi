@@ -196,3 +196,70 @@ export const getListJobs = async (req: AccountRequest, res: Response) => {
     totalPage: totalPage
   })
 }
+
+export const getDetailedJob = async (req: AccountRequest, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const jobDetail = await JobModel.findOne({
+      _id: id,
+      companyId: req.account.id
+    })
+
+    if(!jobDetail) {
+      res.json({
+        code: "error",
+        message: "ID invalid!"
+      })
+      return;
+    }
+
+    res.json({
+      code: "success",
+      message: "Get detailed job successfully!",
+      jobDetail: jobDetail
+    })
+  } 
+  catch(error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "ID invalid!"
+    })
+  }
+}
+
+export const editJob = async (req: AccountRequest, res: Response) => {
+  try {
+    const id = req.params.id;
+    req.body.salaryMin = req.body.salaryMin ? parseInt(req.body.salaryMin) : 0;
+    req.body.salaryMax = req.body.salaryMax ? parseInt(req.body.salaryMax) : 0;
+    req.body.technologies = req.body.technologies ? req.body.technologies.split(", ") : [];
+    req.body.images = [];
+
+    //--- get images
+    if(req.files) {
+      for (const file of req.files as any[]) {
+        req.body.images.push(file.path);
+      }
+    }
+    //--- End get images
+
+    await JobModel.updateOne({
+      _id: id,
+      companyId: req.account.id
+    }, req.body)
+
+    res.json({
+      code: "success",
+      message: "Update job successfully!"
+    })
+  } 
+  catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "ID invalid!"
+    })
+  }
+}
