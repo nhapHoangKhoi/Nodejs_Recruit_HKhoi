@@ -3,6 +3,7 @@ import AccountCompanyModel from "../../models/account-company.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AccountRequest } from "../../interfaces/request.interface";
+import JobModel from "../../models/job.model";
 
 export const registerCompany = async (req: Request, res: Response) => {
   const { companyName, email, password } = req.body;
@@ -110,4 +111,28 @@ export const updateProfile = async (req: AccountRequest, res: Response) => {
     code: "success",
     message: "Update profile successfully!"
   });
+}
+
+export const createJob = async (req: AccountRequest, res: Response) => {
+  req.body.companyId = req.account.id;
+  req.body.salaryMin = req.body.salaryMin ? parseInt(req.body.salaryMin) : 0;
+  req.body.salaryMax = req.body.salaryMax ? parseInt(req.body.salaryMax) : 0;
+  req.body.technologies = req.body.technologies ? req.body.technologies.split(", ") : [];
+  req.body.images = [];
+
+  //--- get images
+  if(req.files) {
+    for(const file of req.files as any[]) {
+      req.body.images.push(file.path);
+    }
+  }
+  //--- End get images
+
+  const newRecord = new JobModel(req.body);
+  await newRecord.save();
+  
+  res.json({
+    code: "success",
+    message: "Create new job successfully!"
+  })
 }
