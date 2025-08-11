@@ -12,7 +12,7 @@ export const search = async (req: Request, res: Response) => {
 
     // --- filter by box technologies
     if(req.query.language) {
-      findObject.technologies = req.query.language;
+      findObject.technologies = { $regex: req.query.language, $options: 'i' }; // i for case-insensitive
     }
     // --- End filter by box technologies
 
@@ -44,6 +44,30 @@ export const search = async (req: Request, res: Response) => {
       findObject.companyId = accountCompany?.id; // used for when there is no matched result
     }
     // --- End filter by box companies
+
+    // --- search by keyword
+    if(req.query.keyword) {
+      const keywordRegex = new RegExp(`${req.query.keyword}`, "i");
+      
+      // find cities matching the keyword
+      const cities = await CityModel.find({
+        name: keywordRegex,
+      });
+      const cityIds = cities.map(city => city.id);
+      
+      // find companies in these cities
+      const companiesInCities = await AccountCompanyModel.find({
+        city: { $in: cityIds },
+      });
+      const companyIdsInCities = companiesInCities.map(company => company.id);
+
+      findObject.$or = [
+        { title: keywordRegex }, // find by title
+        { technologies: keywordRegex }, // find by technologies
+        { companyId: { $in: companyIdsInCities } }, // find by locations
+      ];
+    }
+    // --- End search by keyword
 
     const jobs = await JobModel
       .find(findObject)
