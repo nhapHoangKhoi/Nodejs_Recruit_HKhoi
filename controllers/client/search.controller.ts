@@ -51,6 +51,12 @@ export const search = async (req: Request, res: Response) => {
     }
     // --- End filter by box level
 
+    // --- filter by box workingForm
+    if(req.query.workingForm) {
+      findObject.workingForm = req.query.workingForm;
+    }
+    // --- End filter by box workingForm
+
     // --- search by keyword
     if(req.query.keyword) {
       const keywordRegex = new RegExp(`${req.query.keyword}`, "i");
