@@ -45,6 +45,12 @@ export const search = async (req: Request, res: Response) => {
     }
     // --- End filter by box companies
 
+    // --- filter by box level
+    if(req.query.level) {
+      findObject.level = req.query.level;
+    }
+    // --- End filter by box level
+
     // --- search by keyword
     if(req.query.keyword) {
       const keywordRegex = new RegExp(`${req.query.keyword}`, "i");
@@ -54,7 +60,7 @@ export const search = async (req: Request, res: Response) => {
         name: keywordRegex,
       });
       const cityIds = cities.map(city => city.id);
-      
+
       // find companies in these cities
       const companiesInCities = await AccountCompanyModel.find({
         city: { $in: cityIds },
