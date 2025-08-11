@@ -6,6 +6,7 @@ import companyRoutes from "./company.route";
 import cityRoutes from  "./city.route";
 import uploadRoutes from "./upload.route";
 import searchRoutes from "./search.route";
+import jobRoutes from "./job.route";
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/company', companyRoutes);
 router.use('/city', cityRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/search', searchRoutes);
+router.use('/job', jobRoutes);
 
 export default router;

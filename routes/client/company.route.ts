@@ -47,7 +47,7 @@ router.get(
 router.get(
   '/job/edit/:id', 
   authMiddleware.verifyTokenCompany,
-  companyController.getDetailedJob
+  companyController.getEditDetailedJob
 );
 
 router.patch(

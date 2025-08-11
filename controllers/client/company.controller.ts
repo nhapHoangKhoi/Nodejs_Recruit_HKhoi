@@ -200,7 +200,7 @@ export const getListJobs = async (req: AccountRequest, res: Response) => {
   })
 }
 
-export const getDetailedJob = async (req: AccountRequest, res: Response) => {
+export const getEditDetailedJob = async (req: AccountRequest, res: Response) => {
   try {
     const id = req.params.id;
 
