@@ -5,6 +5,7 @@ import CityModel from "../../models/city.model";
 
 export const search = async (req: Request, res: Response) => {
   const dataFinal = [];
+  let totalPage = 1;
 
   // convert to array
   if(Object.keys(req.query).length > 0) {
@@ -81,11 +82,32 @@ export const search = async (req: Request, res: Response) => {
     }
     // --- End search by keyword
 
+    // ----- Pagination ----- //
+    const limitItems = 2;
+    let page = 1;
+  
+    if(req.query.page) {
+      const currentPage = parseInt(`${req.query.page}`);
+      if(currentPage > 0) { // prevent currentPage = -1
+        page = currentPage;
+      }
+    }
+  
+    const totalRecord = await JobModel.countDocuments(findObject);
+    totalPage = Math.ceil(totalRecord/limitItems);
+    if(page > totalPage) {
+      page = 1;
+    }
+    const skip = (page - 1) * limitItems;
+    // ----- End pagination ----- //
+
     const jobs = await JobModel
       .find(findObject)
       .sort({
         createdAt: "desc"
       })
+      .limit(limitItems)
+      .skip(skip);
 
     for(const item of jobs) {
       const itemFinal = {
@@ -123,6 +145,7 @@ export const search = async (req: Request, res: Response) => {
   res.json({
     code: "success",
     message: "Search successfully!",
-    jobs: dataFinal
+    jobs: dataFinal,
+    totalPage: totalPage
   });
 }

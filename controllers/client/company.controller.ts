@@ -156,6 +156,9 @@ export const getListJobs = async (req: AccountRequest, res: Response) => {
 
   const totalRecord = await JobModel.countDocuments(findObject);
   const totalPage = Math.ceil(totalRecord/limitItems);
+  if(page > totalPage) {
+    page = 1;
+  }
   const skip = (page - 1) * limitItems;
   // ----- End pagination ----- //
 
