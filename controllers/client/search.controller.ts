@@ -10,10 +10,13 @@ export const search = async (req: Request, res: Response) => {
   if(Object.keys(req.query).length > 0) {
     const findObject: any = {};
 
+    // --- filter by box technologies
     if(req.query.language) {
       findObject.technologies = req.query.language;
     }
+    // --- End filter by box technologies
 
+    // --- filter by box locations
     if(req.query.city) {
       const city = await CityModel.findOne({
         name: req.query.city
@@ -31,6 +34,16 @@ export const search = async (req: Request, res: Response) => {
         // };
       }
     }
+    // --- End filter by box locations
+
+    // --- filter by box companies
+    if(req.query.company) {
+      const accountCompany = await AccountCompanyModel.findOne({
+        companyName: { $regex: req.query.company, $options: 'i' } // i for case-insensitive
+      })
+      findObject.companyId = accountCompany?.id; // used for when there is no matched result
+    }
+    // --- End filter by box companies
 
     const jobs = await JobModel
       .find(findObject)
