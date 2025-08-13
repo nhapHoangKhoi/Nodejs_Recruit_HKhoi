@@ -552,3 +552,54 @@ export const getDetailedResume = async (req: AccountRequest, res: Response) => {
     })
   }
 }
+
+export const changeResumeStatus = async (req: AccountRequest, res: Response) => {
+  try {
+    const companyId = req.account.id;
+    const status = req.body.action;
+    const cvId = req.body.id;
+
+    const infoCV = await ResumeModel.findOne({
+      _id: cvId
+    })
+
+    if(!infoCV) {
+      res.json({
+        code: "error",
+        message: "Resume not existed in the system!"
+      })
+      return;
+    }
+
+    const infoJob = await JobModel.findOne({
+      _id: infoCV.jobId,
+      companyId: companyId
+    })
+
+    if(!infoJob) {
+      res.json({
+        code: "error",
+        message: "Job not existed in the system!"
+      })
+      return;
+    }
+
+    await ResumeModel.updateOne({
+      _id: cvId
+    }, {
+      status: status
+    })
+
+    res.json({
+      code: "success",
+      message: "Change resume status successfully!"
+    });
+  } 
+  catch(error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "ID invalid!"
+    })
+  }
+}

@@ -79,4 +79,10 @@ router.get(
   companyController.getDetailedResume
 );
 
+router.patch(
+  '/resume/change-status', 
+  authMiddleware.verifyTokenCompany,
+  companyController.changeResumeStatus
+);
+
 export default router;
