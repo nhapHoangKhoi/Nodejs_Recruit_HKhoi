@@ -351,3 +351,76 @@ export const getListCompanies = async (req: Request, res: Response) => {
     totalPage: totalPage
   })
 }
+
+export const getDetailedCompany = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    const record = await AccountCompanyModel.findOne({
+      _id: id
+    })
+
+    if(!record) {
+      res.json({
+        code: "error",
+        message: "ID invalid!"
+      })
+      return;
+    }
+
+    const companyDetail = {
+      id: record.id,
+      logo: record.logo,
+      companyName: record.companyName,
+      address: record.address,
+      companyModel: record.companyModel,
+      companyEmployees: record.companyEmployees,
+      workingTime: record.workingTime,
+      workOvertime: record.workOvertime,
+      description: record.description,
+    };
+
+    const jobs = await JobModel
+      .find({
+        companyId: id
+      })
+      .sort({
+        createdAt: "desc"
+      });
+
+    const city = await CityModel.findOne({
+      _id: record.city
+    })
+
+    const dataFinal = [];
+
+    for(const item of jobs) {
+      dataFinal.push({
+        id: item.id,
+        companyLogo: record.logo,
+        title: item.title,
+        companyName: record.companyName,
+        salaryMin: item.salaryMin,
+        salaryMax: item.salaryMax,
+        level: item.level,
+        workingForm: item.workingForm,
+        cityName: city?.name,
+        technologies: item.technologies
+      });
+    }
+
+    res.json({
+      code: "success",
+      message: "Get detailed company successfully!",
+      companyDetail: companyDetail,
+      jobs: dataFinal
+    })
+  } 
+  catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "ID invalid!"
+    })
+  }
+}

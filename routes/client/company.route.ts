@@ -65,4 +65,6 @@ router.delete(
 
 router.get('/list', companyController.getListCompanies);
 
+router.get('/detail/:id', companyController.getDetailedCompany);
+
 export default router;
