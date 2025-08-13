@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDatabase } from './config/database';
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './swagger_output.json';
 
 // --- Cookie-parser library, BE can take request.cookies being sent from FE
 //     without this library, console.log(request.cookies) => undefined
@@ -18,6 +20,9 @@ dotenv.config();
 
 // Connect to database
 connectDatabase();
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // CORS
 app.use(cors({
