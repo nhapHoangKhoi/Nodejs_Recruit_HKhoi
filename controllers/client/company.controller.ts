@@ -291,14 +291,33 @@ export const deleteJobPermanent = async (req: AccountRequest, res: Response) => 
 }
 
 export const getListCompanies = async (req: Request, res: Response) => {
+  // ----- Pagination ----- //
   let limitItems = 12;
   if(req.query.limitItems) {
     limitItems = parseInt(`${req.query.limitItems}`);
   }
+
+  let page = 1;
+  if(req.query.page) {
+    const currentPage = parseInt(`${req.query.page}`);
+    if(currentPage > 0) {
+      page = currentPage;
+    }
+  }
+
+  const totalRecord = await JobModel.countDocuments({});
+  const totalPage = Math.ceil(totalRecord/limitItems);
+  const skip = (page - 1) * limitItems;
+  // ----- End pagination ----- //
   
   const companyList = await AccountCompanyModel
     .find({})
-    .limit(limitItems);
+    .sort({
+      createdAt: "desc"
+    })
+    .limit(limitItems)
+    .skip(skip);
+
 
   const companyListFinal = [];
 
@@ -328,6 +347,7 @@ export const getListCompanies = async (req: Request, res: Response) => {
   res.json({
     code: "success",
     message: "Get list companies successfully!",
-    companyList: companyListFinal
+    companyList: companyListFinal,
+    totalPage: totalPage
   })
 }
