@@ -6,6 +6,7 @@ import CityModel from "../../models/city.model";
 export const search = async (req: Request, res: Response) => {
   const dataFinal = [];
   let totalPage = 1;
+  let totalRecords = 0;
 
   // convert to array
   if(Object.keys(req.query).length > 0) {
@@ -93,8 +94,8 @@ export const search = async (req: Request, res: Response) => {
       }
     }
   
-    const totalRecord = await JobModel.countDocuments(findObject);
-    totalPage = Math.ceil(totalRecord/limitItems);
+    totalRecords = await JobModel.countDocuments(findObject);
+    totalPage = Math.ceil(totalRecords/limitItems);
     if(page > totalPage) {
       page = 1;
     }
@@ -146,6 +147,7 @@ export const search = async (req: Request, res: Response) => {
     code: "success",
     message: "Search successfully!",
     jobs: dataFinal,
-    totalPage: totalPage
+    totalPage: totalPage,
+    totalRecords: totalRecords
   });
 }
