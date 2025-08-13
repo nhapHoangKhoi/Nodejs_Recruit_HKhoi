@@ -482,3 +482,73 @@ export const getListResumes = async (req: AccountRequest, res: Response) => {
     listResumes: dataFinal
   })
 }
+
+export const getDetailedResume = async (req: AccountRequest, res: Response) => {
+  try {
+    const companyId = req.account.id;
+    const cvId = req.params.id;
+
+    const infoCV = await ResumeModel.findOne({
+      _id: cvId
+    })
+
+    if(!infoCV) {
+      res.json({
+        code: "error",
+        message: "Resume not existed in the system!"
+      })
+      return;
+    }
+
+    const infoJob = await JobModel.findOne({
+      _id: infoCV.jobId,
+      companyId: companyId
+    })
+
+    if(!infoJob) {
+      res.json({
+        code: "error",
+        message: "Job not existed in the system!"
+      })
+      return;
+    }
+
+    const dataFinalCV = {
+      fullName: infoCV.fullName,
+      email: infoCV.email,
+      phone: infoCV.phone,
+      fileCV: infoCV.fileCV,
+    };
+
+    const dataFinalJob = {
+      id: infoJob.id,
+      title: infoJob.title,
+      salaryMin: infoJob.salaryMin,
+      salaryMax: infoJob.salaryMax,
+      level: infoJob.level,
+      workingForm: infoJob.workingForm,
+      technologies: infoJob.technologies,
+    };
+
+    // update Resume status being viewed
+    await ResumeModel.updateOne({
+      _id: cvId
+    }, {
+      viewed: true
+    })
+
+    res.json({
+      code: "success",
+      message: "Get detailed resume successfully!",
+      infoCV: dataFinalCV,
+      infoJob: dataFinalJob
+    });
+  } 
+  catch (error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "ID invalid!"
+    })
+  }
+}
