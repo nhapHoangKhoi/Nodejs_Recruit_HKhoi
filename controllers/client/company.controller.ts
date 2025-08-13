@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { AccountRequest } from "../../interfaces/request.interface";
 import JobModel from "../../models/job.model";
 import CityModel from "../../models/city.model";
+import ResumeModel from "../../models/resume.model";
 
 export const registerCompany = async (req: Request, res: Response) => {
   const { companyName, email, password } = req.body;
@@ -423,4 +424,61 @@ export const getDetailedCompany = async (req: Request, res: Response) => {
       message: "ID invalid!"
     })
   }
+}
+
+export const getListResumes = async (req: AccountRequest, res: Response) => {
+  const companyId = req.account.id;
+
+  const listJob = await JobModel
+    .find({
+      companyId: companyId
+    });
+
+  const listJobId = listJob.map(item => item.id);
+
+  const listCV = await ResumeModel
+    .find({
+      jobId: { $in: listJobId }
+    })
+    .sort({
+      createdAt: "desc"
+    });
+
+  const dataFinal = [];
+
+  for(const item of listCV) {
+    const dataItemFinal = {
+      id: item.id,
+      jobTitle: "",
+      fullName: item.fullName,
+      email: item.email,
+      phone: item.phone,
+      jobSalaryMin: 0,
+      jobSalaryMax: 0,
+      jobLevel: "",
+      jobWorkingForm: "",
+      viewed: item.viewed,
+      status: item.status,
+    };
+
+    const infoJob = await JobModel.findOne({
+      _id: item.jobId
+    })
+
+    if(infoJob) {
+      dataItemFinal.jobTitle = `${infoJob.title}`;
+      dataItemFinal.jobSalaryMin = parseInt(`${infoJob.salaryMin}`);
+      dataItemFinal.jobSalaryMax = parseInt(`${infoJob.salaryMax}`);
+      dataItemFinal.jobLevel = `${infoJob.level}`;
+      dataItemFinal.jobWorkingForm = `${infoJob.workingForm}`;
+    }
+
+    dataFinal.push(dataItemFinal);
+  }
+
+  res.json({
+    code: "success",
+    message: "Get list resumes successfully!",
+    listResumes: dataFinal
+  })
 }

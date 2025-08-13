@@ -67,4 +67,10 @@ router.get('/list', companyController.getListCompanies);
 
 router.get('/detail/:id', companyController.getDetailedCompany);
 
+router.get(
+  '/resume/list', 
+  authMiddleware.verifyTokenCompany,
+  companyController.getListResumes
+);
+
 export default router;
