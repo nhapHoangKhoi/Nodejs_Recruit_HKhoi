@@ -5,7 +5,7 @@ const doc = {
     title: 'My API',
     description: 'API documentation'
   },
-  host: 'localhost:4000',
+  host: `localhost:${process.env.PORT || 4000}`,
   schemes: ['http'],
 };
 

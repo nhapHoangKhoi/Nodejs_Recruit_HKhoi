@@ -603,3 +603,51 @@ export const changeResumeStatus = async (req: AccountRequest, res: Response) => 
     })
   }
 }
+
+export const deleteResumePermanent = async (req: AccountRequest, res: Response) => {
+  try {
+    const companyId = req.account.id;
+    const cvId = req.params.id;
+
+    const infoCV = await ResumeModel.findOne({
+      _id: cvId
+    })
+
+    if(!infoCV) {
+      res.json({
+        code: "error",
+        message: "Resume not existed in the system!"
+      })
+      return;
+    }
+
+    const infoJob = await JobModel.findOne({
+      _id: infoCV.jobId,
+      companyId: companyId
+    })
+
+    if(!infoJob) {
+      res.json({
+        code: "error",
+        message: "Job not existed in the system!"
+      })
+      return;
+    }
+
+    await ResumeModel.deleteOne({
+      _id: cvId
+    });
+
+    res.json({
+      code: "success",
+      message: "Remove resume successfully!"
+    });
+  } 
+  catch(error) {
+    console.log(error);
+    res.json({
+      code: "error",
+      message: "ID invalid!"
+    })
+  }
+}

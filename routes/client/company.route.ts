@@ -85,4 +85,10 @@ router.patch(
   companyController.changeResumeStatus
 );
 
+router.delete(
+  '/resume/delete/:id', 
+  authMiddleware.verifyTokenCompany,
+  companyController.deleteResumePermanent
+);
+
 export default router;
