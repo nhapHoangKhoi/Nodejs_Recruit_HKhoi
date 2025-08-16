@@ -3,6 +3,9 @@ import AccountUserModel from "../../models/account-user.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AccountRequest } from '../../interfaces/request.interface';
+import ResumeModel from '../../models/resume.model';
+import JobModel from '../../models/job.model';
+import AccountCompanyModel from '../../models/account-company.model';
 
 export const registerAccount = async (req: Request, res: Response) => {
   const { fullName, email, password } = req.body;
@@ -109,5 +112,60 @@ export const updateProfile = async (req: AccountRequest, res: Response) => {
   res.json({
     code: "success",
     message: "Update profile successfully!"
+  });
+}
+
+export const getListSentResumes = async (req: AccountRequest, res: Response) => {
+  const userEmail = req.account.email;
+  
+  const listCV = await ResumeModel
+    .find({
+      email: userEmail
+    })
+    .sort({
+      createdAt: "desc"
+    });
+
+  const dataFinal = [];
+
+  for(const item of listCV) {
+    const dataItemFinal = {
+      id: item.id,
+      jobTitle: "",
+      companyName: "",
+      jobSalaryMin: 0,
+      jobSalaryMax: 0,
+      jobLevel: "",
+      jobWorkingForm: "",
+      status: item.status
+    };
+
+    const infoJob = await JobModel.findOne({
+      _id: item.jobId
+    })
+
+    if(infoJob) {
+      dataItemFinal.jobTitle = `${infoJob.title}`;
+      dataItemFinal.jobSalaryMin = parseInt(`${infoJob.salaryMin}`);
+      dataItemFinal.jobSalaryMax = parseInt(`${infoJob.salaryMax}`);
+      dataItemFinal.jobLevel = `${infoJob.level}`;
+      dataItemFinal.jobWorkingForm = `${infoJob.workingForm}`;
+
+      const infoCompany = await AccountCompanyModel.findOne({
+        _id: infoJob.companyId
+      })
+
+      if(infoCompany) {
+        dataItemFinal.companyName = `${infoCompany.companyName}`;
+      }
+    }
+
+    dataFinal.push(dataItemFinal);
+  }
+
+  res.json({
+    code: "success",
+    message: "Get list sent resumes successfully!",
+    listCV: dataFinal
   });
 }

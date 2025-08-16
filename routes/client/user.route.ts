@@ -32,5 +32,10 @@ router.patch(
   userController.updateProfile
 );
 
+router.get(
+  '/resume/list', 
+  authMiddleware.verifyTokenUser,
+  userController.getListSentResumes
+);
 
 export default router;

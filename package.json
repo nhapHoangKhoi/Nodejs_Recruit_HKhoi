@@ -5,8 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon index.ts",
-    "swagger-autogen": "ts-node swagger.ts",
-    "dev": "yarn swagger-autogen && ts-node index.ts"
+    "swagger-autogen": "ts-node swagger.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
